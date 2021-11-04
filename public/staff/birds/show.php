@@ -3,7 +3,6 @@
 <?php
 
 $id = $_GET['id'] ?? '1'; // PHP > 7.0
-
 $bird = Bird::find_by_id($id);
 
 ?>
