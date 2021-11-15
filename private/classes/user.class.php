@@ -40,6 +40,11 @@ class User extends DatabaseObject {
     $this->hashed_password = password_hash($this->password, PASSWORD_BCRYPT);
   }
 
+  public function verify_password($password) {
+    //returns true if it matches or false if it down not match
+    return password_verify($password, $this->hashed_password);
+  }
+
   protected function create() {
     $this->set_hashed_password();
     return parent::create();
@@ -84,6 +89,8 @@ protected function validate() {
     $this->errors[] = "Username cannot be blank.";
   } elseif (!has_length($this->username, array('min' => 8, 'max' => 255))) {
     $this->errors[] = "Username must be between 8 and 255 characters.";
+  } elseif(!has_unique_username($this->username, $this->id ?? 0)) {
+    $this->errors[] = "Username is not allowed, try another.";
   }
 
   if($this->password_required) {
@@ -109,6 +116,17 @@ protected function validate() {
   }
   
   return $this->errors;
+}
+
+static public function find_by_username($username) {
+  $sql = "SELECT * FROM " . static::$table_name . " ";
+  $sql .= "WHERE username='" . self::$database->escape_string($username) . "'";
+  $obj_array = static::find_by_sql($sql);
+  if(!empty($obj_array)) {
+    return array_shift($obj_array);
+  } else {
+    return false;
+  }
 }
 
 }
