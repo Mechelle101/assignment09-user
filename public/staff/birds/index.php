@@ -1,6 +1,6 @@
-<?php require_once('../../../private/initialize.php'); ?>
-
-<?php
+<?php 
+require_once('../../../private/initialize.php'); 
+require_login(); 
   
 // Find all birds;
 $birds = Bird::find_all();
